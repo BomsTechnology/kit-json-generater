@@ -41,6 +41,7 @@
         .form-section, .preview-section {
             display: flex;
             flex-direction: column;
+            gap: 10px;
         }
 
         .form-group {
@@ -173,6 +174,16 @@
                 <div class="form-group">
                     <label for="urlSuffix">Suffixe base de lien:</label>
                     <input type="text" id="urlSuffix" value="SHERCO">
+                    <div style="display: flex; gap: 15px; margin-top: 8px;">
+                        <label style="font-weight: normal;">
+                            <input type="checkbox" id="urlSuffixUnderscore" checked>
+                            Underscores (_-_)
+                        </label>
+                        <label style="font-weight: normal;">
+                            <input type="checkbox" id="urlSuffixSpace">
+                            Espaces (_)
+                        </label>
+                    </div>
                     <div class="hint">Préfixe des fichiers (laisser vide si pas de préfixe)</div>
                 </div>
 
@@ -183,14 +194,40 @@
                 </div>
 
                 <div class="form-group">
+                    <label for="imageExtension">Extension Image:</label>
+                    <input type="text" id="imageExtension" value="jpg">
+                    <div class="hint">Extension des images</div>
+                </div>
+
+                <div class="form-group">
                     <label for="materials">Matières (séparées par des virgules):</label>
                     <input type="text" id="materials" value="BASIQ,CHROME,HOLO">
+                    <div style="display: flex; gap: 15px; margin-top: 8px;">
+                        <label style="font-weight: normal;">
+                            <input type="checkbox" id="materialUnderscore" checked>
+                            Underscores (_-_)
+                        </label>
+                        <label style="font-weight: normal;">
+                            <input type="checkbox" id="materialSpace">
+                            Espaces (_)
+                        </label>
+                    </div>
                     <div class="hint">Exemple: BASIQ,CHROME,HOLO</div>
                 </div>
 
                 <div class="form-group">
                     <label for="finishes">Finitions (séparées par des virgules):</label>
                     <input type="text" id="finishes" value="GLOSSY,MATTE,GLITTER,TEXTURE,PRISM">
+                    <div style="display: flex; gap: 15px; margin-top: 8px;">
+                        <label style="font-weight: normal;">
+                            <input type="checkbox" id="finishUnderscore" checked>
+                            Underscores (_-_)
+                        </label>
+                        <label style="font-weight: normal;">
+                            <input type="checkbox" id="finishSpace">
+                            Espaces (_)
+                        </label>
+                    </div>
                     <div class="hint">Exemple: GLOSSY,MATTE,GLITTER,TEXTURE,PRISM</div>
                 </div>
 
@@ -198,6 +235,16 @@
                     <label for="elements">Éléments (Format: NOM:COULEUR1,COULEUR2):</label>
                     <textarea id="elements" rows="6">SYNARTH:GREEN,ORANGE,RED
 ORION:BLUE,YELLOW</textarea>
+                    <div style="display: flex; gap: 15px; margin-top: 8px;">
+                        <label style="font-weight: normal;">
+                            <input type="checkbox" id="elementUnderscore" checked>
+                            Underscores (_-_)
+                        </label>
+                        <label style="font-weight: normal;">
+                            <input type="checkbox" id="elementSpace">
+                            Espaces (_)
+                        </label>
+                    </div>
                     <div class="hint">Chaque ligne: NOM_ELEMENT:COULEUR1,COULEUR2,COULEUR3</div>
                 </div>
 
@@ -208,29 +255,25 @@ ORION:BLUE,YELLOW</textarea>
                     </label>
                 </div>
 
-                <div class="form-group">
-                    <label>
-                        <input type="checkbox" id="useUnderscores" checked>
-                        Utiliser les underscores (_-_) comme séparateurs
-                    </label>
-                </div>
+                
+            </div>
 
+            <div class="preview-section">
                 <div class="button-group">
                     <button class="btn-generate" onclick="generateJSON()">Générer JSON</button>
                     <button class="btn-copy" onclick="copyJSON()">Copier JSON</button>
                 </div>
 
-                <div class="output">
-                    <label for="jsonOutput">Résultat JSON:</label>
-                    <textarea id="jsonOutput" readonly></textarea>
-                </div>
-            </div>
-
-            <div class="preview-section">
+                
                 <div class="preview">
                     <h2>Aperçu des données</h2>
                     <div class="preview-count" id="previewCount">0 entrées générées</div>
                     <div id="previewContent"></div>
+                </div>
+
+                <div class="output">
+                    <label for="jsonOutput">Résultat JSON:</label>
+                    <textarea id="jsonOutput" readonly></textarea>
                 </div>
             </div>
         </div>
@@ -244,6 +287,7 @@ ORION:BLUE,YELLOW</textarea>
             const materials = document.getElementById('materials').value.trim().split(',').map(m => m.trim());
             const finishes = document.getElementById('finishes').value.trim().split(',').map(f => f.trim());
             const elementsText = document.getElementById('elements').value.trim();
+            const extensionImage = document.getElementById('imageExtension').value.trim();
 
             if (!baseUrl || !materials.length || !finishes.length || !elementsText) {
                 alert('Veuillez remplir tous les champs obligatoires');
@@ -261,26 +305,51 @@ ORION:BLUE,YELLOW</textarea>
                 }
             }
 
+            function getSeparator(underscoreChecked, spaceChecked) {
+                if (underscoreChecked) return '_-_';
+                if (spaceChecked) return '_';
+                return '';
+            }
+
+            const urlSuffixSep = getSeparator(
+                document.getElementById('urlSuffixUnderscore').checked,
+                document.getElementById('urlSuffixSpace').checked
+            );
+            const materialSep = getSeparator(
+                document.getElementById('materialUnderscore').checked,
+                document.getElementById('materialSpace').checked
+            );
+            const finishSep = getSeparator(
+                document.getElementById('finishUnderscore').checked,
+                document.getElementById('finishSpace').checked
+            );
+            const elementSep = getSeparator(
+                document.getElementById('elementUnderscore').checked,
+                document.getElementById('elementSpace').checked
+            );
+
             const result = [];
-            const urlPrefix = urlSuffix ? `${urlSuffix}_-_` : '';
+            const urlSuffixFormatted = urlSuffix.replace(/ /g, '_');
+            const urlPrefix = urlSuffixFormatted ? `${urlSuffixFormatted}${urlSuffixSep}` : '';
             const twoImages = document.getElementById('twoImages').checked;
-            const useUnderscores = document.getElementById('useUnderscores').checked;
-            const separator = useUnderscores ? '_-_' : '';
 
             for (const [elementName, colors] of Object.entries(elements)) {
                 for (const color of colors) {
                     for (const material of materials) {
                         for (const finish of finishes) {
-                            const colorFormatted = color.replace(/ /g, '_').toUpperCase();
+                            const colorFormatted = color.replace(/ /g, '_');
+                            const elementNameFormatted = elementName.replace(/ /g, '_');
+                            const materialFormatted = material.replace(/ /g, '_');
+                            const finishFormatted = finish.replace(/ /g, '_');
                             
                             let illustrationImage;
                             if (twoImages) {
                                 illustrationImage = [
-                                    `${baseUrl}/${urlPrefix}FRONT_RIGHT${separator}${material}${separator}${finish}${separator}${elementName}${separator}${colorFormatted}.jpg`,
-                                    `${baseUrl}/${urlPrefix}SIDE${separator}${material}${separator}${finish}${separator}${elementName}${separator}${colorFormatted}.jpg`
+                                    `${baseUrl}/${urlPrefix}FRONT_RIGHT${materialSep}${materialFormatted}${finishSep}${finishFormatted}${elementSep}${elementNameFormatted}${elementSep}${colorFormatted}.${extensionImage}`,
+                                    `${baseUrl}/${urlPrefix}SIDE${materialSep}${materialFormatted}${finishSep}${finishFormatted}${elementSep}${elementNameFormatted}${elementSep}${colorFormatted}.${extensionImage}`
                                 ];
                             } else {
-                                illustrationImage = `${baseUrl}/${urlPrefix}${material}${separator}${finish}${separator}${elementName}${separator}${colorFormatted}.jpg`;
+                                illustrationImage = `${baseUrl}/${urlPrefix}${materialFormatted}${materialSep}${finishFormatted}${finishSep}${elementNameFormatted}${elementSep}${colorFormatted}.${extensionImage}`;
                             }
                             
                             const item = {
@@ -296,7 +365,7 @@ ORION:BLUE,YELLOW</textarea>
                 }
             }
 
-            const jsonOutput = result.map(item => JSON.stringify(item, null, 2)).join(',\n');
+            const jsonOutput = result.map(item => JSON.stringify(item)).join(',\n');
             document.getElementById('jsonOutput').value = jsonOutput;
             updatePreview(result);
         }
