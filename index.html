@@ -1,400 +1,495 @@
 <!DOCTYPE html>
 <html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Générateur JSON - Kit Déco</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
 
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f5f5f5;
-            padding: 20px;
-        }
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f5f5f5;
+        padding: 20px;
+      }
 
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            background: white;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        background: white;
+        padding: 30px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
 
-        h1 {
-            color: #333;
-            margin-bottom: 30px;
-            font-size: 24px;
-        }
+      h1 {
+        color: #333;
+        margin-bottom: 30px;
+        font-size: 24px;
+      }
 
+      .content {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 30px;
+      }
+
+      .form-section,
+      .preview-section {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .form-group {
+        margin-bottom: 20px;
+      }
+
+      label {
+        display: block;
+        margin-bottom: 8px;
+        color: #555;
+        font-weight: bold;
+      }
+
+      input,
+      textarea {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 14px;
+      }
+
+      textarea {
+        resize: vertical;
+        font-family: monospace;
+      }
+
+      .button-group {
+        display: flex;
+        gap: 10px;
+        margin-top: 20px;
+      }
+
+      button {
+        padding: 12px 24px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: bold;
+      }
+
+      .btn-generate {
+        background-color: #007bff;
+        color: white;
+      }
+
+      .btn-generate:hover {
+        background-color: #0056b3;
+      }
+
+      .btn-copy {
+        background-color: #28a745;
+        color: white;
+      }
+
+      .btn-copy:hover {
+        background-color: #218838;
+      }
+
+      .output {
+        margin-top: 20px;
+      }
+
+      .output textarea {
+        height: 300px;
+        background-color: #f8f9fa;
+      }
+
+      .hint {
+        font-size: 12px;
+        color: #666;
+        margin-top: 4px;
+      }
+
+      .preview {
+        background-color: #f8f9fa;
+        padding: 20px;
+        border-radius: 4px;
+        border: 1px solid #ddd;
+      }
+
+      .preview h2 {
+        font-size: 18px;
+        margin-bottom: 15px;
+        color: #333;
+      }
+
+      .preview-item {
+        background: white;
+        padding: 15px;
+        margin-bottom: 10px;
+        border-radius: 4px;
+        border: 1px solid #e0e0e0;
+      }
+
+      .preview-item strong {
+        color: #007bff;
+      }
+
+      .preview-item div {
+        margin: 5px 0;
+        font-size: 13px;
+      }
+
+      .preview-count {
+        font-weight: bold;
+        color: #28a745;
+        margin-bottom: 10px;
+      }
+
+      @media (max-width: 768px) {
         .content {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 30px;
+          grid-template-columns: 1fr;
         }
-
-        .form-section, .preview-section {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 8px;
-            color: #555;
-            font-weight: bold;
-        }
-
-        input, textarea {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 14px;
-        }
-
-        textarea {
-            resize: vertical;
-            font-family: monospace;
-        }
-
-        .button-group {
-            display: flex;
-            gap: 10px;
-            margin-top: 20px;
-        }
-
-        button {
-            padding: 12px 24px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: bold;
-        }
-
-        .btn-generate {
-            background-color: #007bff;
-            color: white;
-        }
-
-        .btn-generate:hover {
-            background-color: #0056b3;
-        }
-
-        .btn-copy {
-            background-color: #28a745;
-            color: white;
-        }
-
-        .btn-copy:hover {
-            background-color: #218838;
-        }
-
-        .output {
-            margin-top: 20px;
-        }
-
-        .output textarea {
-            height: 300px;
-            background-color: #f8f9fa;
-        }
-
-        .hint {
-            font-size: 12px;
-            color: #666;
-            margin-top: 4px;
-        }
-
-        .preview {
-            background-color: #f8f9fa;
-            padding: 20px;
-            border-radius: 4px;
-            border: 1px solid #ddd;
-        }
-
-        .preview h2 {
-            font-size: 18px;
-            margin-bottom: 15px;
-            color: #333;
-        }
-
-        .preview-item {
-            background: white;
-            padding: 15px;
-            margin-bottom: 10px;
-            border-radius: 4px;
-            border: 1px solid #e0e0e0;
-        }
-
-        .preview-item strong {
-            color: #007bff;
-        }
-
-        .preview-item div {
-            margin: 5px 0;
-            font-size: 13px;
-        }
-
-        .preview-count {
-            font-weight: bold;
-            color: #28a745;
-            margin-bottom: 10px;
-        }
-
-        @media (max-width: 768px) {
-            .content {
-                grid-template-columns: 1fr;
-            }
-        }
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <div class="container">
-        <h1>Générateur JSON - Kit Déco</h1>
+      <h1>Générateur JSON - Kit Déco</h1>
 
-        <div class="content">
-            <div class="form-section">
-                <div class="form-group">
-                    <label for="baseUrl">Base de lien:</label>
-                    <input type="text" id="baseUrl" value="https://cdn.shopify.com/s/files/1/0730/5756/7015/files">
-                    <div class="hint">URL de base pour les images</div>
-                </div>
+      <div class="content">
+        <div class="form-section">
+          <div class="form-group">
+            <label for="baseUrl">Base de lien:</label>
+            <input
+              type="text"
+              id="baseUrl"
+              value="https://cdn.shopify.com/s/files/1/0730/5756/7015/files"
+            />
+            <div class="hint">URL de base pour les images</div>
+          </div>
 
-                <div class="form-group">
-                    <label for="urlSuffix">Suffixe base de lien:</label>
-                    <input type="text" id="urlSuffix" value="SHERCO">
-                    <div style="display: flex; gap: 15px; margin-top: 8px;">
-                        <label style="font-weight: normal;">
-                            <input type="checkbox" id="urlSuffixUnderscore" checked>
-                            Underscores (_-_)
-                        </label>
-                        <label style="font-weight: normal;">
-                            <input type="checkbox" id="urlSuffixSpace">
-                            Espaces (_)
-                        </label>
-                    </div>
-                    <div class="hint">Préfixe des fichiers (laisser vide si pas de préfixe)</div>
-                </div>
-
-                <div class="form-group">
-                    <label for="nameSuffix">Suffixe nom:</label>
-                    <input type="text" id="nameSuffix" value=" - Kit Déco 50cc Semi-Personnalisable">
-                    <div class="hint">Texte ajouté après le nom de l'élément</div>
-                </div>
-
-                <div class="form-group">
-                    <label for="imageExtension">Extension Image:</label>
-                    <input type="text" id="imageExtension" value="jpg">
-                    <div class="hint">Extension des images</div>
-                </div>
-
-                <div class="form-group">
-                    <label for="materials">Matières (séparées par des virgules):</label>
-                    <input type="text" id="materials" value="BASIQ,CHROME,HOLO">
-                    <div style="display: flex; gap: 15px; margin-top: 8px;">
-                        <label style="font-weight: normal;">
-                            <input type="checkbox" id="materialUnderscore" checked>
-                            Underscores (_-_)
-                        </label>
-                        <label style="font-weight: normal;">
-                            <input type="checkbox" id="materialSpace">
-                            Espaces (_)
-                        </label>
-                    </div>
-                    <div class="hint">Exemple: BASIQ,CHROME,HOLO</div>
-                </div>
-
-                <div class="form-group">
-                    <label for="finishes">Finitions (séparées par des virgules):</label>
-                    <input type="text" id="finishes" value="GLOSSY,MATTE,GLITTER,TEXTURE,PRISM">
-                    <div style="display: flex; gap: 15px; margin-top: 8px;">
-                        <label style="font-weight: normal;">
-                            <input type="checkbox" id="finishUnderscore" checked>
-                            Underscores (_-_)
-                        </label>
-                        <label style="font-weight: normal;">
-                            <input type="checkbox" id="finishSpace">
-                            Espaces (_)
-                        </label>
-                    </div>
-                    <div class="hint">Exemple: GLOSSY,MATTE,GLITTER,TEXTURE,PRISM</div>
-                </div>
-
-                <div class="form-group">
-                    <label for="elements">Éléments (Format: NOM:COULEUR1,COULEUR2):</label>
-                    <textarea id="elements" rows="6">SYNARTH:GREEN,ORANGE,RED
-ORION:BLUE,YELLOW</textarea>
-                    <div style="display: flex; gap: 15px; margin-top: 8px;">
-                        <label style="font-weight: normal;">
-                            <input type="checkbox" id="elementUnderscore" checked>
-                            Underscores (_-_)
-                        </label>
-                        <label style="font-weight: normal;">
-                            <input type="checkbox" id="elementSpace">
-                            Espaces (_)
-                        </label>
-                    </div>
-                    <div class="hint">Chaque ligne: NOM_ELEMENT:COULEUR1,COULEUR2,COULEUR3</div>
-                </div>
-
-                <div class="form-group">
-                    <label>
-                        <input type="checkbox" id="twoImages" checked>
-                        Deux images (sinon une seule image)
-                    </label>
-                </div>
-
-                
+          <div class="form-group">
+            <label for="urlSuffix">Suffixe base de lien:</label>
+            <input type="text" id="urlSuffix" value="SHERCO" />
+            <div style="display: flex; gap: 15px; margin-top: 8px">
+              <label style="font-weight: normal">
+                <input type="checkbox" id="urlSuffixUnderscore" checked />
+                Underscores (_-_)
+              </label>
+              <label style="font-weight: normal">
+                <input type="checkbox" id="urlSuffixSpace" />
+                Espaces (_)
+              </label>
             </div>
-
-            <div class="preview-section">
-                <div class="button-group">
-                    <button class="btn-generate" onclick="generateJSON()">Générer JSON</button>
-                    <button class="btn-copy" onclick="copyJSON()">Copier JSON</button>
-                </div>
-
-                
-                <div class="preview">
-                    <h2>Aperçu des données</h2>
-                    <div class="preview-count" id="previewCount">0 entrées générées</div>
-                    <div id="previewContent"></div>
-                </div>
-
-                <div class="output">
-                    <label for="jsonOutput">Résultat JSON:</label>
-                    <textarea id="jsonOutput" readonly></textarea>
-                </div>
+            <div class="hint">
+              Préfixe des fichiers (laisser vide si pas de préfixe)
             </div>
+          </div>
+
+          <div class="form-group">
+            <label for="nameSuffix">Suffixe nom:</label>
+            <input
+              type="text"
+              id="nameSuffix"
+              value=" - Kit Déco 50cc Semi-Personnalisable"
+            />
+            <div class="hint">Texte ajouté après le nom de l'élément</div>
+          </div>
+
+          <div class="form-group">
+            <label for="imageExtension">Extension Image:</label>
+            <input type="text" id="imageExtension" value="jpg" />
+            <div class="hint">Extension des images</div>
+          </div>
+
+          <div class="form-group">
+            <label for="materials">Matières (séparées par des virgules):</label>
+            <input type="text" id="materials" value="BASIQ,CHROME,HOLO" />
+            <div style="display: flex; gap: 15px; margin-top: 8px">
+              <label style="font-weight: normal">
+                <input type="checkbox" id="materialUnderscore" checked />
+                Underscores (_-_)
+              </label>
+              <label style="font-weight: normal">
+                <input type="checkbox" id="materialSpace" />
+                Espaces (_)
+              </label>
+            </div>
+            <div class="hint">Exemple: BASIQ,CHROME,HOLO</div>
+          </div>
+          <div class="form-group">
+            <label for="materialsFr">Matières en français (séparées par des virgules):</label>
+            <input type="text" id="materialsFr" value="Basique,Chrome,Holographique">
+            <div class="hint">Pour le champ "material" du JSON - dans le même ordre que les matières anglaises</div>
         </div>
+
+          <div class="form-group">
+            <label for="finishes">Finitions (séparées par des virgules):</label>
+            <input
+              type="text"
+              id="finishes"
+              value="GLOSSY,MATTE,GLITTER,TEXTURE,PRISM"
+            />
+            <div style="display: flex; gap: 15px; margin-top: 8px">
+              <label style="font-weight: normal">
+                <input type="checkbox" id="finishUnderscore" checked />
+                Underscores (_-_)
+              </label>
+              <label style="font-weight: normal">
+                <input type="checkbox" id="finishSpace" />
+                Espaces (_)
+              </label>
+            </div>
+            <div class="hint">Exemple: GLOSSY,MATTE,GLITTER,TEXTURE,PRISM</div>
+          </div>
+          <div class="form-group">
+            <label for="finishesFr">Finitions en français (séparées par des virgules):</label>
+            <input type="text" id="finishesFr" value="Brillant,Matte,Pailleté,Texture,Prisme">
+            <div class="hint">Pour le champ "finish" du JSON - dans le même ordre que les finitions anglaises</div>
+        </div>
+
+          <div class="form-group">
+            <label for="elements"
+              >Éléments avec couleurs anglaises (Format:
+              NOM:COULEUR1,COULEUR2):</label
+            >
+            <textarea id="elements" rows="6">
+SYNARTH:GREEN,ORANGE,RED
+                ORION:BLUE,YELLOW</textarea
+            >
+            <div style="display: flex; gap: 15px; margin-top: 8px">
+              <label style="font-weight: normal">
+                <input type="checkbox" id="elementUnderscore" checked />
+                Underscores (_-_)
+              </label>
+              <label style="font-weight: normal">
+                <input type="checkbox" id="elementSpace" />
+                Espaces (_)
+              </label>
+            </div>
+            <div class="hint">
+              Pour les URLs - Chaque ligne: NOM_ELEMENT:COULEUR1,COULEUR2
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="elementsFr"
+              >Éléments avec couleurs françaises (Format:
+              NOM:Couleur1,Couleur2):</label
+            >
+            <textarea id="elementsFr" rows="6">
+CRUST:Bleu,Bleu foncé,Vert,Gris,Rose,Rouge,Turquoise,Jaune
+                FLEXO:Bleu,Bleu foncé,Vert,Gris,Rose,Rouge,Turquoise,Jaune,Orange,Violet
+                FYNX:Bleu,Bleu foncé,Vert,Gris,Rose,Rouge,Turquoise,Jaune,Orange,Violet</textarea
+            >
+            <div class="hint">
+              Pour le champ "color" du JSON - Chaque ligne:
+              NOM_ELEMENT:Couleur1,Couleur2
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>
+              <input type="checkbox" id="twoImages" checked />
+              Deux images (sinon une seule image)
+            </label>
+          </div>
+        </div>
+
+        <div class="preview-section">
+          <div class="button-group">
+            <button class="btn-generate" onclick="generateJSON()">
+              Générer JSON
+            </button>
+            <button class="btn-copy" onclick="copyJSON()">Copier JSON</button>
+          </div>
+
+          <div class="preview">
+            <h2>Aperçu des données</h2>
+            <div class="preview-count" id="previewCount">
+              0 entrées générées
+            </div>
+            <div id="previewContent"></div>
+          </div>
+
+          <div class="output">
+            <label for="jsonOutput">Résultat JSON:</label>
+            <textarea id="jsonOutput" readonly></textarea>
+          </div>
+        </div>
+      </div>
     </div>
 
     <script>
-        function generateJSON() {
-            const baseUrl = document.getElementById('baseUrl').value.trim();
-            const urlSuffix = document.getElementById('urlSuffix').value.trim();
-            const nameSuffix = document.getElementById('nameSuffix').value;
-            const materials = document.getElementById('materials').value.trim().split(',').map(m => m.trim());
-            const finishes = document.getElementById('finishes').value.trim().split(',').map(f => f.trim());
-            const elementsText = document.getElementById('elements').value.trim();
-            const extensionImage = document.getElementById('imageExtension').value.trim();
+      function generateJSON() {
+        const baseUrl = document.getElementById("baseUrl").value.trim();
+        const urlSuffix = document.getElementById("urlSuffix").value.trim();
+        const nameSuffix = document.getElementById("nameSuffix").value;
+        const materials = document
+          .getElementById("materials")
+          .value.trim()
+          .split(",")
+          .map((m) => m.trim());
+        const finishes = document
+          .getElementById("finishes")
+          .value.trim()
+          .split(",")
+          .map((f) => f.trim());
+        const elementsText = document.getElementById("elements").value.trim();
+        const extensionImage = document
+          .getElementById("imageExtension")
+          .value.trim();
+          const materialsFr = document.getElementById('materialsFr').value.trim().split(',').map(m => m.trim());
+const finishesFr = document.getElementById('finishesFr').value.trim().split(',').map(f => f.trim());
 
-            if (!baseUrl || !materials.length || !finishes.length || !elementsText) {
-                alert('Veuillez remplir tous les champs obligatoires');
-                return;
-            }
-
-            const elements = {};
-            const lines = elementsText.split('\n');
-            
-            for (const line of lines) {
-                if (!line.trim()) continue;
-                const [name, colorsStr] = line.split(':');
-                if (name && colorsStr) {
-                    elements[name.trim()] = colorsStr.split(',').map(c => c.trim());
-                }
-            }
-
-            function getSeparator(underscoreChecked, spaceChecked) {
-                if (underscoreChecked) return '_-_';
-                if (spaceChecked) return '_';
-                return '';
-            }
-
-            const urlSuffixSep = getSeparator(
-                document.getElementById('urlSuffixUnderscore').checked,
-                document.getElementById('urlSuffixSpace').checked
-            );
-            const materialSep = getSeparator(
-                document.getElementById('materialUnderscore').checked,
-                document.getElementById('materialSpace').checked
-            );
-            const finishSep = getSeparator(
-                document.getElementById('finishUnderscore').checked,
-                document.getElementById('finishSpace').checked
-            );
-            const elementSep = getSeparator(
-                document.getElementById('elementUnderscore').checked,
-                document.getElementById('elementSpace').checked
-            );
-
-            const result = [];
-            const urlSuffixFormatted = urlSuffix.replace(/ /g, '_');
-            const urlPrefix = urlSuffixFormatted ? `${urlSuffixFormatted}${urlSuffixSep}` : '';
-            const twoImages = document.getElementById('twoImages').checked;
-
-            for (const [elementName, colors] of Object.entries(elements)) {
-                for (const color of colors) {
-                    for (const material of materials) {
-                        for (const finish of finishes) {
-                            const colorFormatted = color.replace(/ /g, '_');
-                            const elementNameFormatted = elementName.replace(/ /g, '_');
-                            const materialFormatted = material.replace(/ /g, '_');
-                            const finishFormatted = finish.replace(/ /g, '_');
-                            
-                            let illustrationImage;
-                            if (twoImages) {
-                                illustrationImage = [
-                                    `${baseUrl}/${urlPrefix}FRONT_RIGHT${materialSep}${materialFormatted}${finishSep}${finishFormatted}${elementSep}${elementNameFormatted}${elementSep}${colorFormatted}.${extensionImage}`,
-                                    `${baseUrl}/${urlPrefix}SIDE${materialSep}${materialFormatted}${finishSep}${finishFormatted}${elementSep}${elementNameFormatted}${elementSep}${colorFormatted}.${extensionImage}`
-                                ];
-                            } else {
-                                illustrationImage = `${baseUrl}/${urlPrefix}${materialFormatted}${materialSep}${finishFormatted}${finishSep}${elementNameFormatted}${elementSep}${colorFormatted}.${extensionImage}`;
-                            }
-                            
-                            const item = {
-                                name: `${elementName}${nameSuffix}`,
-                                color: color,
-                                material: material,
-                                finish: finish,
-                                illustration_image: illustrationImage
-                            };
-                            result.push(item);
-                        }
-                    }
-                }
-            }
-
-            const jsonOutput = result.map(item => JSON.stringify(item)).join(',\n');
-            document.getElementById('jsonOutput').value = jsonOutput;
-            updatePreview(result);
+        if (
+          !baseUrl ||
+          !materials.length ||
+          !finishes.length ||
+          !elementsText
+        ) {
+          alert("Veuillez remplir tous les champs obligatoires");
+          return;
         }
 
-        function updatePreview(data) {
-            const previewContent = document.getElementById('previewContent');
-            const previewCount = document.getElementById('previewCount');
+        const elements = {};
+        const lines = elementsText.split("\n");
+
+        for (const line of lines) {
+          if (!line.trim()) continue;
+          const [name, colorsStr] = line.split(":");
+          if (name && colorsStr) {
+            elements[name.trim()] = colorsStr.split(",").map((c) => c.trim());
+          }
+        }
+
+        // Parse French colors
+        const elementsFr = {};
+        const elementsFrText = document
+          .getElementById("elementsFr")
+          .value.trim();
+        const linesFr = elementsFrText.split("\n");
+
+        for (const line of linesFr) {
+          if (!line.trim()) continue;
+          const [name, colorsStr] = line.split(":");
+          if (name && colorsStr) {
+            elementsFr[name.trim()] = colorsStr.split(",").map((c) => c.trim());
+          }
+        }
+
+        function getSeparator(underscoreChecked, spaceChecked) {
+          if (underscoreChecked) return "_-_";
+          if (spaceChecked) return "_";
+          return "";
+        }
+
+        const urlSuffixSep = getSeparator(
+          document.getElementById("urlSuffixUnderscore").checked,
+          document.getElementById("urlSuffixSpace").checked
+        );
+        const materialSep = getSeparator(
+          document.getElementById("materialUnderscore").checked,
+          document.getElementById("materialSpace").checked
+        );
+        const finishSep = getSeparator(
+          document.getElementById("finishUnderscore").checked,
+          document.getElementById("finishSpace").checked
+        );
+        const elementSep = getSeparator(
+          document.getElementById("elementUnderscore").checked,
+          document.getElementById("elementSpace").checked
+        );
+
+        const result = [];
+        const urlSuffixFormatted = urlSuffix.replace(/ /g, "_");
+        const urlPrefix = urlSuffixFormatted
+          ? `${urlSuffixFormatted}${urlSuffixSep}`
+          : "";
+        const twoImages = document.getElementById("twoImages").checked;
+
+        for (const [elementName, colors] of Object.entries(elements)) {
+    const colorsFr = elementsFr[elementName] || colors;
+    
+    for (let i = 0; i < colors.length; i++) {
+        const color = colors[i];
+        const colorFr = colorsFr[i] || color;
+        
+        for (let j = 0; j < materials.length; j++) {
+            const material = materials[j];
+            const materialFr = materialsFr[j] || material;
             
-            previewCount.textContent = `${data.length} entrées générées`;
-            
-            if (data.length > 0) {
-                const firstItem = data[0];
-                const isArray = Array.isArray(firstItem.illustration_image);
+            for (let k = 0; k < finishes.length; k++) {
+                const finish = finishes[k];
+                const finishFr = finishesFr[k] || finish;
                 
-                let imagesHTML = '';
-                if (isArray) {
-                    imagesHTML = `
+                const colorFormatted = color.replace(/ /g, "_");
+                const elementNameFormatted = elementName.replace(/ /g, "_");
+                const materialFormatted = material.replace(/ /g, "_");
+                const finishFormatted = finish.replace(/ /g, "_");
+                
+                let illustrationImage;
+                if (twoImages) {
+                    illustrationImage = [
+                        `${baseUrl}/${urlPrefix}FRONT_RIGHT${materialSep}${materialFormatted}${finishSep}${finishFormatted}${elementSep}${elementNameFormatted}${elementSep}${colorFormatted}.${extensionImage}`,
+                        `${baseUrl}/${urlPrefix}SIDE${materialSep}${materialFormatted}${finishSep}${finishFormatted}${elementSep}${elementNameFormatted}${elementSep}${colorFormatted}.${extensionImage}`,
+                    ];
+                } else {
+                    illustrationImage = `${baseUrl}/${urlPrefix}${materialFormatted}${materialSep}${finishFormatted}${finishSep}${elementNameFormatted}${elementSep}${colorFormatted}.${extensionImage}`;
+                }
+                
+                const item = {
+                    name: `${elementName}${nameSuffix}`.toLowerCase(),
+                    color: colorFr.toLowerCase(),
+                    material: materialFr.toLowerCase(),
+                    finish: finishFr.toLowerCase(),
+                    illustration_image: illustrationImage,
+                };
+                result.push(item);
+            }
+        }
+    }
+}
+
+        const jsonOutput = result.map(item => JSON.stringify(item)).join(',');
+        document.getElementById("jsonOutput").value = jsonOutput;
+        updatePreview(result);
+}
+
+      function updatePreview(data) {
+        const previewContent = document.getElementById("previewContent");
+        const previewCount = document.getElementById("previewCount");
+
+        previewCount.textContent = `${data.length} entrées générées`;
+
+        if (data.length > 0) {
+          const firstItem = data[0];
+          const isArray = Array.isArray(firstItem.illustration_image);
+
+          let imagesHTML = "";
+          if (isArray) {
+            imagesHTML = `
                         <div style="margin-top: 10px; font-size: 11px; color: #666;">Images:</div>
                         <div style="font-size: 11px; color: #666; word-break: break-all;">${firstItem.illustration_image[0]}</div>
                         <div style="font-size: 11px; color: #666; word-break: break-all;">${firstItem.illustration_image[1]}</div>
                     `;
-                } else {
-                    imagesHTML = `
+          } else {
+            imagesHTML = `
                         <div style="margin-top: 10px; font-size: 11px; color: #666;">Image:</div>
                         <div style="font-size: 11px; color: #666; word-break: break-all;">${firstItem.illustration_image}</div>
                     `;
-                }
-                
-                previewContent.innerHTML = `
+          }
+
+          previewContent.innerHTML = `
                     <div class="preview-item">
                         <strong>${firstItem.name}</strong>
                         <div>Couleur: ${firstItem.color}</div>
@@ -403,23 +498,23 @@ ORION:BLUE,YELLOW</textarea>
                         ${imagesHTML}
                     </div>
                 `;
-            }
         }
+      }
 
-        function copyJSON() {
-            const output = document.getElementById('jsonOutput');
-            if (!output.value) {
-                alert('Générez d\'abord le JSON');
-                return;
-            }
-            output.select();
-            document.execCommand('copy');
-            alert('JSON copié dans le presse-papiers');
+      function copyJSON() {
+        const output = document.getElementById("jsonOutput");
+        if (!output.value) {
+          alert("Générez d'abord le JSON");
+          return;
         }
+        output.select();
+        document.execCommand("copy");
+        alert("JSON copié dans le presse-papiers");
+      }
 
-        window.onload = function() {
-            generateJSON();
-        };
+      window.onload = function () {
+        generateJSON();
+      };
     </script>
-</body>
+  </body>
 </html>
